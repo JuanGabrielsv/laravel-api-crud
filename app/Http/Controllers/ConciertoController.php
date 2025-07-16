@@ -138,6 +138,17 @@ class ConciertoController extends Controller
      */
     public function update(Request $request, $id)
     {
+        //Validamos que solo se pueda pasar los campos que tiene concierto.
+        $camposEnviados = array_keys($request->all());
+        $camposInvalidos = array_diff($camposEnviados, self::CAMPOS_REQUERIDOS);
+        if (!empty($camposInvalidos)) {
+            $repuesta = [
+                'mensaje' => 'Campos no permitidos en la solicitud',
+                'campos_invalidos' => array_values($camposInvalidos),
+                'status' => 422
+            ];
+            return response()->json($repuesta, 422);
+        }
 
         $concierto = Concierto::find($id);
 
