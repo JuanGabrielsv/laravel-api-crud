@@ -8,15 +8,13 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::get('/conciertos', [ConciertoController::class, 'index'] );
+Route::get('/conciertos', [ConciertoController::class, 'index']);
 
 Route::get('/conciertos/{id}', function () {
     return 'Obteniendo un concierto';
 });
 
-Route::post('/conciertos', function () {
-    return 'Creando concierto';
-});
+Route::post('/conciertos', [ConciertoController::class, 'store']);
 
 Route::put('/conciertos/{id}', function () {
     return 'Editando concierto';
