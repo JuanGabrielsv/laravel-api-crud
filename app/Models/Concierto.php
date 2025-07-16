@@ -15,7 +15,6 @@ class Concierto extends Model
         'titulo',
         'lugar',
         'fecha_concierto',
-        'es_gratis',
         'precio_concierto',
     ];
 }
