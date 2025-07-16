@@ -23,13 +23,32 @@ class ConciertoController extends Controller
     }
 
     /**
+     * GET by id - Buscar concierto por ID.
+     * @param $id
+     * @return JsonResponse
+     */
+    public function show($id)
+    {
+        $concierto = Concierto::find($id);
+
+        if ($concierto === null) {
+            $repuesta = [
+                'Mensaje' => 'El concierto con el id ' . $id . ' no existe',
+                'status' => 404
+            ];
+            return response()->json($repuesta, 404);
+        }
+
+        return response()->json(['Concierto' => $concierto], 200);
+    }
+
+    /**
      * POST - Crear un concierto
      * @param Request $request
      * @return JsonResponse
      */
     public function store(Request $request)
     {
-
         //Validamos primero los datos recibidos
         $validateRequest = Validator::make($request->all(), [
             'titulo' => 'required',
@@ -59,16 +78,35 @@ class ConciertoController extends Controller
         if (!$concierto) {
             $respuesta = [
                 'mensaje' => 'Error al crear el concierto',
-                'errors' => [500]
+                'status' => 500
             ];
             return response()->json($respuesta, 500);
         }
         $respuesta = [
-            'mensaje' => 'Concierto creado',
-            'concierto' => $concierto,
+            'mensaje' => 'Concierto creado correctamente',
             'status' => 200
         ];
         return response()->json($respuesta, 200);
 
+    }
+
+    public function destroy($id)
+    {
+        $concierto = Concierto::find($id);
+
+        if ($concierto === null) {
+            $repuesta = [
+                'Mensaje' => 'El concierto con el id ' . $id . ' no existe',
+                'status' => 404
+            ];
+            return response()->json($repuesta, 404);
+        }
+        $concierto->delete();
+
+        $respuesta = [
+            'mensaje' => 'Concierto eliminado correctamente',
+            'status' => 200
+        ];
+        return response()->json($respuesta, 200);
     }
 }

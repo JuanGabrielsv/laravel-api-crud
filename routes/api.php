@@ -10,9 +10,7 @@ Route::get('/user', function (Request $request) {
 
 Route::get('/conciertos', [ConciertoController::class, 'index']);
 
-Route::get('/conciertos/{id}', function () {
-    return 'Obteniendo un concierto';
-});
+Route::get('/conciertos/{id}', [ConciertoController::class, 'show']);
 
 Route::post('/conciertos', [ConciertoController::class, 'store']);
 
@@ -20,6 +18,4 @@ Route::put('/conciertos/{id}', function () {
     return 'Editando concierto';
 });
 
-Route::delete('/conciertos/{id}', function () {
-    return 'Eliminando concierto';
-});
+Route::delete('/conciertos/{id}', [ConciertoController::class, 'destroy']);
