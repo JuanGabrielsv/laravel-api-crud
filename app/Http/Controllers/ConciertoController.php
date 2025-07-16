@@ -55,16 +55,28 @@ class ConciertoController extends Controller
             'lugar' => 'required',
             'fecha_concierto' => 'required',
             'es_gratis' => 'required|boolean',
-            'precio_concierto' => 'required',
+            'precio_concierto' => 'required|numeric',
         ]);
+
+        //Validamos que si es_gratis es verdadero precio debe ser 0.
+        $validateRequest->after(function ($validator) use ($request) {
+            if (in_array($request->input('es_gratis'), [true, 1, '1'], true)) {
+                if ((float)$request->input('precio_concierto') !== 0.0) {
+                    $validator->errors()->add(
+                        'precio_concierto',
+                        'El precio debe ser 0 si el concierto es gratis.'
+                    );
+                }
+            }
+        });
 
         if ($validateRequest->fails()) {
             $respuesta = [
                 'mensaje' => 'Error al validar los datos',
                 'errors' => $validateRequest->errors(),
-                'status' => 400
+                'status' => 422
             ];
-            return response()->json($respuesta, 400);
+            return response()->json($respuesta, 422);
         }
 
         $concierto = Concierto::create([
