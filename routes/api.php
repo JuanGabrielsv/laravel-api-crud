@@ -14,8 +14,8 @@ Route::get('/conciertos/{id}', [ConciertoController::class, 'show']);
 
 Route::post('/conciertos', [ConciertoController::class, 'store']);
 
-Route::put('/conciertos/{id}', function () {
-    return 'Editando concierto';
-});
+Route::put('/conciertos/{id}',[ConciertoController::class, 'update']);
+
+Route::patch('/conciertos/{id}',[ConciertoController::class, 'updatePartial']);
 
 Route::delete('/conciertos/{id}', [ConciertoController::class, 'destroy']);
