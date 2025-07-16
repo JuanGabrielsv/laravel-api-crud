@@ -168,4 +168,58 @@ class ConciertoController extends Controller
         return response()->json($respuesta, 200);
 
     }
+
+    public function updatePartial(Request $request, $id)
+    {
+        $concierto = Concierto::find($id);
+
+        if ($concierto === null) {
+            $repuesta = [
+                'Mensaje' => 'El concierto con el id ' . $id . ' no existe',
+                'status' => 404
+            ];
+            return response()->json($repuesta, 404);
+        }
+
+        $validateRequest = Validator::make($request->all(), [
+            'titulo' => 'sometimes|required',
+            'lugar' => 'sometimes|required',
+            'fecha_concierto' => 'sometimes|required',
+            'es_gratis' => 'sometimes|required|boolean',
+            'precio_concierto' => 'sometimes|required',
+        ]);
+
+        if ($validateRequest->fails()) {
+            $respuesta = [
+                'mensaje' => 'Error al validar los datos',
+                'errors' => $validateRequest->errors(),
+                'status' => 422
+            ];
+            return response()->json($respuesta, 422);
+        }
+
+        $campos = [
+            'titulo',
+            'lugar',
+            'fecha_concierto',
+            'es_gratis',
+            'precio_concierto',
+        ];
+
+        foreach ($campos as $campo) {
+            if ($request->has($campo)) {
+                $concierto->{$campo} = $request->input($campo);
+            }
+        }
+
+        $concierto->save();
+
+        $respuesta = [
+            'mensaje' => 'Concierto actualizado correctamente',
+            'status' => 200
+        ];
+
+        return response()->json($respuesta, 200);
+
+    }
 }
