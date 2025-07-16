@@ -169,6 +169,12 @@ class ConciertoController extends Controller
 
     }
 
+    /**
+     * PATCH - Actualización parcial de concierto.
+     * @param Request $request
+     * @param $id
+     * @return JsonResponse
+     */
     public function updatePartial(Request $request, $id)
     {
         $concierto = Concierto::find($id);
@@ -179,6 +185,28 @@ class ConciertoController extends Controller
                 'status' => 404
             ];
             return response()->json($repuesta, 404);
+        }
+
+        //Validamos que solo se pueda pasar los campos que tiene concierto.
+        $camposPermitidos = ['titulo', 'lugar', 'fecha_concierto', 'es_gratis', 'precio_concierto'];
+        $camposEnviados = array_keys($request->all());
+        $camposInvalidos = array_diff($camposEnviados, $camposPermitidos);
+        if(!empty($camposInvalidos)) {
+            $repuesta = [
+                'mensaje' => 'Campos no permitidos en la solicitud',
+                'campos_invalidos' => array_values($camposInvalidos),
+                'status' => 422
+            ];
+            return response()->json($repuesta, 422);
+        }
+
+        //Validamos para que request no pueda estar vacio.
+        if(empty($request->all())) {
+            $repuesta = [
+                'mensaje' => 'No se ha pasado ningún dato',
+                'status' => 422
+            ];
+            return response()->json($repuesta, 422);
         }
 
         $validateRequest = Validator::make($request->all(), [
