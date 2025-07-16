@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('titulo');
             $table->string('lugar');
             $table->dateTime('fecha_concierto');
-            $table->boolean('es_gratis');
             $table->float('precio_concierto');
             $table->timestamps();
         });
