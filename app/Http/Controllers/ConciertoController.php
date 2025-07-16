@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Validator;
 
 class ConciertoController extends Controller
 {
+    const CAMPOS_REQUERIDOS = ['titulo', 'lugar', 'fecha_concierto', 'precio_concierto'];
+
     /**
      * GET - Mostrar todos los conciertos.
      * @return JsonResponse/ JSON con la lista de conciertos o mensaje de error.
@@ -50,6 +52,18 @@ class ConciertoController extends Controller
      */
     public function store(Request $request)
     {
+        //Validamos que solo se pueda pasar los campos que tiene concierto.
+        $camposEnviados = array_keys($request->all());
+        $camposInvalidos = array_diff($camposEnviados, self::CAMPOS_REQUERIDOS);
+        if (!empty($camposInvalidos)) {
+            $repuesta = [
+                'mensaje' => 'Campos no permitidos en la solicitud',
+                'campos_invalidos' => array_values($camposInvalidos),
+                'status' => 422
+            ];
+            return response()->json($repuesta, 422);
+        }
+
         //Validamos primero los datos recibidos
         $validateRequest = Validator::make($request->all(), [
             'titulo' => 'required',
@@ -187,9 +201,8 @@ class ConciertoController extends Controller
         }
 
         //Validamos que solo se pueda pasar los campos que tiene concierto.
-        $camposPermitidos = ['titulo', 'lugar', 'fecha_concierto', 'es_gratis', 'precio_concierto'];
         $camposEnviados = array_keys($request->all());
-        $camposInvalidos = array_diff($camposEnviados, $camposPermitidos);
+        $camposInvalidos = array_diff($camposEnviados, self::CAMPOS_REQUERIDOS);
         if (!empty($camposInvalidos)) {
             $repuesta = [
                 'mensaje' => 'Campos no permitidos en la solicitud',
