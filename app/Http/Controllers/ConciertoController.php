@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreConciertoRequest;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -50,58 +51,19 @@ class ConciertoController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function store(Request $request)
+    public function store(StoreConciertoRequest $request)
     {
-        //Validamos que solo se pueda pasar los campos que tiene concierto.
-        $camposEnviados = array_keys($request->all());
-        $camposInvalidos = array_diff($camposEnviados, self::CAMPOS_REQUERIDOS);
-        if (!empty($camposInvalidos)) {
-            $repuesta = [
-                'mensaje' => 'Campos no permitidos en la solicitud',
-                'campos_invalidos' => array_values($camposInvalidos),
-                'status' => 422
-            ];
-            return response()->json($repuesta, 422);
-        }
-
-        //Validamos primero los datos recibidos
-        $validateRequest = Validator::make($request->all(), [
-            'titulo' => 'required',
-            'lugar' => 'required',
-            'fecha_concierto' => 'required',
-            'precio_entrada' => 'required|numeric',
-        ]);
-
-        if ($validateRequest->fails()) {
-            $respuesta = [
-                'mensaje' => 'Error al validar los datos',
-                'errors' => $validateRequest->errors(),
-                'status' => 422
-            ];
-            return response()->json($respuesta, 422);
-        }
-
         try {
-            $concierto = Concierto::create([
-                'titulo' => $request->get('titulo'),
-                'lugar' => $request->get('lugar'),
-                'fecha_concierto' => $request->get('fecha_concierto'),
-                'precio_entrada' => $request->get('precio_entrada'),
-            ]);
-
-            $respuesta = [
+            $concierto = Concierto::create($request->validated());
+            return response()->json([
                 'mensaje' => 'Concierto creado correctamente',
-                'status' => 200
-            ];
-            return response()->json($respuesta, 201);
-
+                'concierto' => $concierto,
+            ], 201);
         } catch (Exception $e) {
             return response()->json([
                 'mensaje' => 'Error al crear el concierto',
-                'error' => $e->getMessage(), //Quitar en producción
-                'status' => 500
+                'error' => $e->getMessage(), // Quitar en producción
             ], 500);
-
         }
     }
 
