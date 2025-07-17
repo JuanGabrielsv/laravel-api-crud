@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreConciertoRequest;
+use App\Services\ConciertoService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -11,6 +12,10 @@ use Illuminate\Support\Facades\Validator;
 
 class ConciertoController extends Controller
 {
+    protected ConciertoService $conciertoService;
+    public function __construct(ConciertoService $conciertoService){
+        $this->conciertoService = $conciertoService;
+    }
     const CAMPOS_REQUERIDOS = ['titulo', 'lugar', 'fecha_concierto', 'precio_entrada'];
 
     /**
@@ -54,7 +59,7 @@ class ConciertoController extends Controller
     public function store(StoreConciertoRequest $request)
     {
         try {
-            $concierto = Concierto::create($request->validated());
+            $concierto = $this->conciertoService->create($request->validated());
             return response()->json([
                 'mensaje' => 'Concierto creado correctamente',
                 'concierto' => $concierto,
