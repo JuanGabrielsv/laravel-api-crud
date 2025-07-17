@@ -15,7 +15,7 @@ class Concierto extends Model
         'titulo',
         'lugar',
         'fecha_concierto',
-        'precio_concierto',
+        'precio_entrada',
     ];
 
     public function getCreatedAtAttribute($value)
