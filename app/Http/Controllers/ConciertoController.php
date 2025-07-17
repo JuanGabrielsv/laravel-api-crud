@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreConciertoRequest;
 use App\Services\ConciertoService;
-use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\Concierto;
@@ -56,7 +55,7 @@ class ConciertoController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function store(StoreConciertoRequest $request)
+    public function store(StoreConciertoRequest $request): JsonResponse
     {
             return $this->conciertoService->create($request->validated());
     }

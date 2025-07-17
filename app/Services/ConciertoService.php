@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Concierto;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 
 class ConciertoService
@@ -12,7 +13,7 @@ class ConciertoService
      * Create a new class instance.
      * @throws Exception
      */
-    public function create(array $data)
+    public function create(array $data): JsonResponse
     {
         try {
             $concierto = Concierto::create($data);
