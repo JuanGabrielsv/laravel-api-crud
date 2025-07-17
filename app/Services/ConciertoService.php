@@ -100,6 +100,11 @@ class ConciertoService
         }
     }
 
+    /**
+     * @param $id
+     * @param $data
+     * @return JsonResponse
+     */
     public function update($id, $data): JsonResponse
     {
         try {
@@ -132,4 +137,38 @@ class ConciertoService
         }
     }
 
+    /**
+     * @param array $data
+     * @param $id
+     * @return JsonResponse
+     */
+    public function updatePartial(array $data, $id): JsonResponse
+    {
+        try {
+            $concierto = Concierto::find($id);
+
+            if (!$concierto) {
+                return response()->json([
+                    'mensaje' => "No se encontró el concierto con ID $id"
+                ], 404);
+            }
+
+            // Solo actualiza los campos que vienen en $data
+            foreach ($data as $campo => $valor) {
+                $concierto->{$campo} = $valor;
+            }
+
+            $concierto->save();
+
+            return response()->json([
+                'mensaje' => 'Concierto actualizado correctamente',
+                'concierto' => $concierto
+            ]);
+        } catch (Exception $e) {
+            Log::error('Error al actualizar concierto (PATCH): ' . $e->getMessage());
+            return response()->json([
+                'mensaje' => 'Ha ocurrido un error al actualizar el concierto. Inténtelo más tarde.'
+            ], 500);
+        }
+    }
 }
