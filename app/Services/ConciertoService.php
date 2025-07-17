@@ -4,11 +4,15 @@ namespace App\Services;
 
 use App\Models\Concierto;
 use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 
 class ConciertoService
 {
+    /**
+     * @return JsonResponse
+     */
     public function index(): JsonResponse
     {
         try {
@@ -31,8 +35,30 @@ class ConciertoService
     }
 
     /**
-     * Create a new class instance.
-     * @throws Exception
+     * @param $id
+     * @return JsonResponse
+     */
+    public function show($id): JsonResponse
+    {
+        try {
+            $concierto = Concierto::find($id);
+            if (!$concierto) {
+                return response()->json([
+                    'mensaje' => 'No hay concierto con el id ' . $id
+                ]);
+            }
+            return response()->json($concierto);
+        } catch (QueryException $e) {
+            Log::error($e->getMessage());
+            return response()->json([
+                'mensaje' => 'Ha ocurrido un error con la base de datos, inténtelo nuevamente mas tarde.'
+            ], 500);
+        }
+    }
+
+    /**
+     * @param array $data
+     * @return JsonResponse
      */
     public function create(array $data): JsonResponse
     {
@@ -51,4 +77,24 @@ class ConciertoService
         }
     }
 
+    /**
+     * @param $id
+     * @return JsonResponse
+     */
+    public function destroy($id): JsonResponse
+    {
+        try {
+            $conciertoBorrar = Concierto::find($id);
+            if (!$conciertoBorrar) {
+                return response()->json([
+                    'mensaje' => 'No hay concierto con el id ' . $id
+                ]);
+            }
+            Concierto::destroy($id);
+            return response()->json(['mensaje' => 'Concierto eliminado correctamente']);
+        } catch (QueryException $e){
+            Log::error($e->getMessage());
+            return response()->json(['Ha ocurrido un error con la base de datos, inténtelo más tarde.']);
+        }
+    }
 }

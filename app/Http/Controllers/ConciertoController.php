@@ -31,19 +31,9 @@ class ConciertoController extends Controller
      * @param $id
      * @return JsonResponse
      */
-    public function show($id)
+    public function show($id): JsonResponse
     {
-        $concierto = Concierto::find($id);
-
-        if ($concierto === null) {
-            $repuesta = [
-                'Mensaje' => 'El concierto con el id ' . $id . ' no existe',
-                'status' => 404
-            ];
-            return response()->json($repuesta, 404);
-        }
-
-        return response()->json(['Concierto' => $concierto], 200);
+        return $this->conciertoService->show($id);
     }
 
     /**
@@ -61,24 +51,9 @@ class ConciertoController extends Controller
      * @param $id
      * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy($id): JsonResponse
     {
-        $concierto = Concierto::find($id);
-
-        if ($concierto === null) {
-            $repuesta = [
-                'Mensaje' => 'El concierto con el id ' . $id . ' no existe',
-                'status' => 404
-            ];
-            return response()->json($repuesta, 404);
-        }
-        $concierto->delete();
-
-        $respuesta = [
-            'mensaje' => 'Concierto eliminado correctamente',
-            'status' => 200
-        ];
-        return response()->json($respuesta, 200);
+        return $this->conciertoService->destroy($id);
     }
 
     /**
@@ -87,7 +62,7 @@ class ConciertoController extends Controller
      * @param $id
      * @return JsonResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): JsonResponse
     {
         //Validamos que solo se pueda pasar los campos que tiene concierto.
         $camposEnviados = array_keys($request->all());
