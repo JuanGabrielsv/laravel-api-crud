@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Validator;
 
 class ConciertoController extends Controller
 {
-    const CAMPOS_REQUERIDOS = ['titulo', 'lugar', 'fecha_concierto', 'precio_concierto'];
+    const CAMPOS_REQUERIDOS = ['titulo', 'lugar', 'fecha_concierto', 'precio_entrada'];
 
     /**
      * GET - Mostrar todos los conciertos.
@@ -69,7 +69,7 @@ class ConciertoController extends Controller
             'titulo' => 'required',
             'lugar' => 'required',
             'fecha_concierto' => 'required',
-            'precio_concierto' => 'required|numeric',
+            'precio_entrada' => 'required|numeric',
         ]);
 
         if ($validateRequest->fails()) {
@@ -86,7 +86,7 @@ class ConciertoController extends Controller
                 'titulo' => $request->get('titulo'),
                 'lugar' => $request->get('lugar'),
                 'fecha_concierto' => $request->get('fecha_concierto'),
-                'precio_concierto' => $request->get('precio_concierto'),
+                'precio_entrada' => $request->get('precio_entrada'),
             ]);
 
             $respuesta = [
@@ -164,7 +164,7 @@ class ConciertoController extends Controller
             'titulo' => 'required',
             'lugar' => 'required',
             'fecha_concierto' => 'required',
-            'precio_concierto' => 'required',
+            'precio_entrada' => 'required',
         ]);
 
         if ($validateRequest->fails()) {
@@ -180,7 +180,7 @@ class ConciertoController extends Controller
         $concierto->titulo = $request->get('titulo');
         $concierto->lugar = $request->get('lugar');
         $concierto->fecha_concierto = $request->get('fecha_concierto');
-        $concierto->precio_concierto = $request->get('precio_concierto');
+        $concierto->precio_entrada = $request->get('precio_entrada');
 
         $concierto->save();
 
@@ -236,7 +236,7 @@ class ConciertoController extends Controller
             'titulo' => 'sometimes|required',
             'lugar' => 'sometimes|required',
             'fecha_concierto' => 'sometimes|required',
-            'precio_concierto' => 'sometimes|required',
+            'precio_entrada' => 'sometimes|required',
         ]);
 
         if ($validateRequest->fails()) {
@@ -252,7 +252,7 @@ class ConciertoController extends Controller
             'titulo',
             'lugar',
             'fecha_concierto',
-            'precio_concierto',
+            'precio_entrada',
         ];
 
         foreach ($campos as $campo) {
