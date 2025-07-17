@@ -12,7 +12,6 @@ class StoreConciertoRequest extends FormRequest
     {
         return true;
     }
-
     public function rules(): array
     {
         return [
@@ -22,7 +21,6 @@ class StoreConciertoRequest extends FormRequest
             'precio_entrada' => 'required|numeric|min:0',
         ];
     }
-
     public function messages(): array
     {
         return [
@@ -35,7 +33,6 @@ class StoreConciertoRequest extends FormRequest
             'precio_entrada.min' => 'El precio no puede ser negativo.',
         ];
     }
-
     protected function prepareForValidation(): void
     {
         $camposPermitidos = ['titulo', 'lugar', 'fecha_concierto', 'precio_entrada'];
@@ -48,12 +45,5 @@ class StoreConciertoRequest extends FormRequest
                 'campos_invalidos' => array_values($camposInvalidos)
             ], 422));
         }
-    }
-
-    protected function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json([
-            'errors' => $validator->errors(),
-        ], 422));
     }
 }
