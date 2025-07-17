@@ -18,6 +18,8 @@ class StoreConciertoRequest extends FormRequest
             'precio_entrada' => 'required|numeric|min:0',
         ];
     }
+
+    //Voy a dejar esto para tenerlo como ejemplo, pero se podría usar los mensajes por defecto.
     public function messages(): array
     {
         return [
