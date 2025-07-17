@@ -10,14 +10,16 @@ class ConciertoService
 {
     /**
      * Create a new class instance.
+     * @throws Exception
      */
-    public function create(array $data): Concierto
+    public function create(array $data)
     {
         try {
             return Concierto::create($data);
-        } catch (Exception $e){
-            Log::error('Error al crear concierto: '.$e->getMessage());
-            throw $e;
+        } catch (Exception $e) {
+            Log::error($e->getMessage());
+            return response()->json(['message' => 'Error al crear concierto',
+                'error' => $e->getMessage()], 500);
         }
     }
 }
