@@ -15,7 +15,21 @@ class Concierto extends Model
         'titulo',
         'lugar',
         'fecha_concierto',
-        'es_gratis',
-        'precio_concierto',
+        'precio_entrada',
     ];
+
+    public function getCreatedAtAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->format('Y-m-d H:i');
+    }
+
+    public function getUpdatedAtAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->format('Y-m-d H:i');
+    }
+
+    public function getFechaConciertoAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->format('Y-m-d H:i');
+    }
 }

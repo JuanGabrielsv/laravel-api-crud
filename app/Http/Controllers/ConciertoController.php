@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreConciertoRequest;
+use App\Services\ConciertoService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\Concierto;
@@ -9,6 +11,12 @@ use Illuminate\Support\Facades\Validator;
 
 class ConciertoController extends Controller
 {
+    protected ConciertoService $conciertoService;
+    public function __construct(ConciertoService $conciertoService){
+        $this->conciertoService = $conciertoService;
+    }
+    const CAMPOS_REQUERIDOS = ['titulo', 'lugar', 'fecha_concierto', 'precio_entrada'];
+
     /**
      * GET - Mostrar todos los conciertos.
      * @return JsonResponse/ JSON con la lista de conciertos o mensaje de error.
@@ -47,47 +55,9 @@ class ConciertoController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function store(Request $request)
+    public function store(StoreConciertoRequest $request): JsonResponse
     {
-        //Validamos primero los datos recibidos
-        $validateRequest = Validator::make($request->all(), [
-            'titulo' => 'required',
-            'lugar' => 'required',
-            'fecha_concierto' => 'required',
-            'es_gratis' => 'required|boolean',
-            'precio_concierto' => 'required',
-        ]);
-
-        if ($validateRequest->fails()) {
-            $respuesta = [
-                'mensaje' => 'Error al validar los datos',
-                'errors' => $validateRequest->errors(),
-                'status' => 400
-            ];
-            return response()->json($respuesta, 400);
-        }
-
-        $concierto = Concierto::create([
-            'titulo' => $request->get('titulo'),
-            'lugar' => $request->get('lugar'),
-            'fecha_concierto' => $request->get('fecha_concierto'),
-            'es_gratis' => $request->get('es_gratis'),
-            'precio_concierto' => $request->get('precio_concierto'),
-        ]);
-
-        if (!$concierto) {
-            $respuesta = [
-                'mensaje' => 'Error al crear el concierto',
-                'status' => 500
-            ];
-            return response()->json($respuesta, 500);
-        }
-        $respuesta = [
-            'mensaje' => 'Concierto creado correctamente',
-            'status' => 200
-        ];
-        return response()->json($respuesta, 200);
-
+            return $this->conciertoService->create($request->validated());
     }
 
     /**
@@ -123,6 +93,17 @@ class ConciertoController extends Controller
      */
     public function update(Request $request, $id)
     {
+        //Validamos que solo se pueda pasar los campos que tiene concierto.
+        $camposEnviados = array_keys($request->all());
+        $camposInvalidos = array_diff($camposEnviados, self::CAMPOS_REQUERIDOS);
+        if (!empty($camposInvalidos)) {
+            $repuesta = [
+                'mensaje' => 'Campos no permitidos en la solicitud',
+                'campos_invalidos' => array_values($camposInvalidos),
+                'status' => 422
+            ];
+            return response()->json($repuesta, 422);
+        }
 
         $concierto = Concierto::find($id);
 
@@ -138,25 +119,23 @@ class ConciertoController extends Controller
             'titulo' => 'required',
             'lugar' => 'required',
             'fecha_concierto' => 'required',
-            'es_gratis' => 'required|boolean',
-            'precio_concierto' => 'required',
+            'precio_entrada' => 'required',
         ]);
 
         if ($validateRequest->fails()) {
             $respuesta = [
                 'mensaje' => 'Error al validar los datos',
                 'errors' => $validateRequest->errors(),
-                'status' => 400
+                'status' => 422
             ];
-            return response()->json($respuesta, 400);
+            return response()->json($respuesta, 422);
 
         }
 
         $concierto->titulo = $request->get('titulo');
         $concierto->lugar = $request->get('lugar');
         $concierto->fecha_concierto = $request->get('fecha_concierto');
-        $concierto->es_gratis = $request->get('es_gratis');
-        $concierto->precio_concierto = $request->get('precio_concierto');
+        $concierto->precio_entrada = $request->get('precio_entrada');
 
         $concierto->save();
 
@@ -169,6 +148,12 @@ class ConciertoController extends Controller
 
     }
 
+    /**
+     * PATCH - Actualización parcial de concierto.
+     * @param Request $request
+     * @param $id
+     * @return JsonResponse
+     */
     public function updatePartial(Request $request, $id)
     {
         $concierto = Concierto::find($id);
@@ -181,12 +166,32 @@ class ConciertoController extends Controller
             return response()->json($repuesta, 404);
         }
 
+        //Validamos que solo se pueda pasar los campos que tiene concierto.
+        $camposEnviados = array_keys($request->all());
+        $camposInvalidos = array_diff($camposEnviados, self::CAMPOS_REQUERIDOS);
+        if (!empty($camposInvalidos)) {
+            $repuesta = [
+                'mensaje' => 'Campos no permitidos en la solicitud',
+                'campos_invalidos' => array_values($camposInvalidos),
+                'status' => 422
+            ];
+            return response()->json($repuesta, 422);
+        }
+
+        //Validamos para que request no pueda estar vacio.
+        if (empty($request->all())) {
+            $repuesta = [
+                'mensaje' => 'No se ha pasado ningún dato',
+                'status' => 422
+            ];
+            return response()->json($repuesta, 422);
+        }
+
         $validateRequest = Validator::make($request->all(), [
             'titulo' => 'sometimes|required',
             'lugar' => 'sometimes|required',
             'fecha_concierto' => 'sometimes|required',
-            'es_gratis' => 'sometimes|required|boolean',
-            'precio_concierto' => 'sometimes|required',
+            'precio_entrada' => 'sometimes|required',
         ]);
 
         if ($validateRequest->fails()) {
@@ -202,8 +207,7 @@ class ConciertoController extends Controller
             'titulo',
             'lugar',
             'fecha_concierto',
-            'es_gratis',
-            'precio_concierto',
+            'precio_entrada',
         ];
 
         foreach ($campos as $campo) {
