@@ -58,18 +58,7 @@ class ConciertoController extends Controller
      */
     public function store(StoreConciertoRequest $request)
     {
-        try {
-            $concierto = $this->conciertoService->create($request->validated());
-            return response()->json([
-                'mensaje' => 'Concierto creado correctamente',
-                'concierto' => $concierto,
-            ], 201);
-        } catch (Exception $e) {
-            return response()->json([
-                'mensaje' => 'Error al crear el concierto',
-                'error' => $e->getMessage(), // Quitar en producción
-            ], 500);
-        }
+            return $this->conciertoService->create($request->validated());
     }
 
     /**
