@@ -21,13 +21,9 @@ class ConciertoController extends Controller
      * GET - Mostrar todos los conciertos.
      * @return JsonResponse/ JSON con la lista de conciertos o mensaje de error.
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        $conciertos = Concierto::all();
-        if ($conciertos->isEmpty()) {
-            return response()->json(['Mensaje' => 'No existen conciertos'], 404);
-        }
-        return response()->json(['Conciertos' => $conciertos], 200);
+        return $this->conciertoService->index();
     }
 
     /**
