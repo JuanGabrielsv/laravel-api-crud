@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreBandaRequest;
+use App\Http\Requests\UpdatePartialBandaResquest;
 use App\Services\BandaService;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
@@ -35,13 +36,18 @@ class BandaController extends Controller
     {
         try {
             $banda = $this->bandaService->store($request->validated());
-            return response()->json($banda);
+            return response()->json([
+                'mensaje' => 'La banda se ha creado correctamente',
+                'banda' => $banda
+            ]);
         } catch (QueryException $e) {
-            $pdoCode = $e->getCode();
-
-            if ($pdoCode === 2002) {
-                return response()->json(['mensaje' => 'No hay conexión con la base de datos',
-                    'code' => $pdoCode], 503);
+            if ($e->getCode() == 2002) {
+                Log::error('Error de conexión con la base de datos', ['error' => $e->getMessage()]);
+                return response()->json([
+                    'mensaje' => 'No hay conexión con la base de datos',
+                    'error_code' => $e->getCode(),
+                    'error_detail' => 'No se puede establecer una conexión ya que el equipo de destino denegó expresamente dicha conexión',
+                ], 503);
             }
             Log::error('Error al guardar nueva banda (store)', [$e->getMessage()]);
             return response()->json([
@@ -51,6 +57,26 @@ class BandaController extends Controller
                 'line' => $e->getLine(),
             ]);
         }
+    }
+
+    public function show($id): JsonResponse
+    {
+        return $this->bandaService->show($id);
+    }
+
+    public function update(StoreBandaRequest $request, $id): JsonResponse
+    {
+        return $this->bandaService->update($id, $request->validated());
+    }
+
+    public function updatePartial(UpdatePartialBandaResquest $resquest, $id): JsonResponse
+    {
+        return $this->bandaService->updatePartial($resquest->validated(), $id);
+    }
+
+    public function destroy($id): JsonResponse
+    {
+        return $this->bandaService->destroy($id);
     }
 
 
