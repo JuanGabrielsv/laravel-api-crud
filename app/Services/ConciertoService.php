@@ -29,9 +29,7 @@ class ConciertoService
                 "mensaje" => "Ha ocurrido un error",
                 'error' => '¿No existe la columna en la bd o la misma bd tal vez?'
             ], 500);
-
         }
-
     }
 
     /**
