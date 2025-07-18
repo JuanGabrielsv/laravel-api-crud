@@ -17,7 +17,7 @@ class StoreBandaRequest extends FormRequest
     {
         return [
             'nombre' => 'required|string',
-            'genero' => 'required',
+            'genero' => 'required|string',
             'idioma' => 'required|string'
         ];
     }
