@@ -16,7 +16,7 @@ class ConciertoService
     public function index(): JsonResponse
     {
         try {
-            $conciertos = Concierto::with('banda')->get();
+            $conciertos = Concierto::with('banda')->paginate(10);
             if ($conciertos->isEmpty()) {
                 return response()->json([
                     "mensaje" => "No hay ningún conciertos registrados",
@@ -39,7 +39,7 @@ class ConciertoService
     public function show($id): JsonResponse
     {
         try {
-            $concierto = Concierto::find($id);
+            $concierto = Concierto::with('banda')->find($id);
             if (!$concierto) {
                 return response()->json([
                     'mensaje' => 'No hay concierto con el id ' . $id
