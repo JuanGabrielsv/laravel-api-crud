@@ -16,7 +16,7 @@ class StoreBandaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nombre' => 'required|string',
+            'nombre' => 'required|string|unique:banda,nombre',
             'genero' => 'required|string',
             'idioma' => 'required|string'
         ];

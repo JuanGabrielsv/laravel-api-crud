@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('banda', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
+            $table->string('nombre')->unique();
             $table->string('genero');
             $table->string('idioma');
             $table->timestamps();

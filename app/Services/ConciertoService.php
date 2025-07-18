@@ -62,6 +62,9 @@ class ConciertoService
     {
         try {
             $concierto = Concierto::create($data);
+            $concierto->load('banda');
+
+
             return response()->json([
                 'mensaje' => 'Concierto creado correctamente',
                 'concierto' => $concierto], 201);
