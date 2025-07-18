@@ -15,6 +15,7 @@ class Banda extends Model
     protected $fillable = [
         'nombre',
         'genero',
+        'idioma',
     ];
 
     public function concierto(): HasMany

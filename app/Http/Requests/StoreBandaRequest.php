@@ -6,7 +6,8 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreBandaRequest extends FormRequest
 {
-    private const CAMPOS_REQUERIDOS = ['nombre','genero'];
+    private const CAMPOS_REQUERIDOS = ['nombre', 'genero', 'idioma'];
+
     public function authorize(): bool
     {
         return true;
@@ -17,6 +18,7 @@ class StoreBandaRequest extends FormRequest
         return [
             'nombre' => 'required|string',
             'genero' => 'required',
+            'idioma' => 'required|string'
         ];
     }
 
