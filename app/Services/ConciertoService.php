@@ -16,7 +16,7 @@ class ConciertoService
     public function index(): JsonResponse
     {
         try {
-            $conciertos = Concierto::all();
+            $conciertos = Concierto::with('banda')->get();
             if ($conciertos->isEmpty()) {
                 return response()->json([
                     "mensaje" => "No hay ningún conciertos registrados",

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Concierto extends Model
 {
@@ -16,7 +17,13 @@ class Concierto extends Model
         'lugar',
         'fecha_concierto',
         'precio_entrada',
+        'banda_id'
     ];
+
+    public function banda(): BelongsTo
+    {
+        return $this->belongsTo(Banda::class, 'banda_id');
+    }
 
     public function getCreatedAtAttribute($value)
     {
