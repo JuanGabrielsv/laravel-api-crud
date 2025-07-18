@@ -3,12 +3,18 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+
+
 class StoreConciertoRequest extends FormRequest
 {
+
+    private const CAMPOS_REQUERIDOS = ['titulo', 'lugar', 'fecha_concierto', 'precio_entrada', 'banda_id'];
+
     public function authorize(): bool
     {
         return true;
     }
+
     public function rules(): array
     {
         return [
@@ -16,6 +22,7 @@ class StoreConciertoRequest extends FormRequest
             'lugar' => 'required|string|max:50',
             'fecha_concierto' => 'required|date_format:Y-m-d H:i',
             'precio_entrada' => 'required|numeric|min:0',
+            'banda_id' => 'required|exists:banda,id',
         ];
     }
 
@@ -32,11 +39,12 @@ class StoreConciertoRequest extends FormRequest
             'precio_entrada.min' => 'El precio no puede ser negativo.',
         ];
     }
+
     protected function prepareForValidation(): void
     {
-        $camposPermitidos = ['titulo', 'lugar', 'fecha_concierto', 'precio_entrada'];
+
         $camposRecibidos = array_keys($this->all());
-        $camposInvalidos = array_diff($camposRecibidos, $camposPermitidos);
+        $camposInvalidos = array_diff($camposRecibidos, self::CAMPOS_REQUERIDOS);
 
         if (!empty($camposInvalidos)) {
             abort(response()->json([

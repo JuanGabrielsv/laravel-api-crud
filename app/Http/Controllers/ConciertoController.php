@@ -7,9 +7,6 @@ use App\Http\Requests\UpdateConciertoRequest;
 use App\Http\Requests\UpdatePartialConciertoRequest;
 use App\Services\ConciertoService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use App\Models\Concierto;
-use Illuminate\Support\Facades\Validator;
 
 class ConciertoController extends Controller
 {
@@ -21,7 +18,8 @@ class ConciertoController extends Controller
     /**
      * @param ConciertoService $conciertoService
      */
-    public function __construct(ConciertoService $conciertoService){
+    public function __construct(ConciertoService $conciertoService)
+    {
         $this->conciertoService = $conciertoService;
     }
 
@@ -48,7 +46,7 @@ class ConciertoController extends Controller
      */
     public function store(StoreConciertoRequest $request): JsonResponse
     {
-            return $this->conciertoService->create($request->validated());
+        return $this->conciertoService->create($request->validated());
     }
 
     /**

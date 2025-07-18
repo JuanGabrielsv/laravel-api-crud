@@ -4,25 +4,23 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Concierto extends Model
+class Banda extends Model
 {
     use HasFactory;
 
-    protected $table = 'concierto';
+    protected $table = 'banda';
 
     protected $fillable = [
-        'titulo',
-        'lugar',
-        'fecha_concierto',
-        'precio_entrada',
-        'banda_id'
+        'nombre',
+        'genero',
+        'idioma',
     ];
 
-    public function banda(): BelongsTo
+    public function concierto(): HasMany
     {
-        return $this->belongsTo(Banda::class, 'banda_id');
+        return $this->hasMany(Concierto::class, 'banda_id');
     }
 
     public function getCreatedAtAttribute($value)
