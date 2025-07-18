@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreBandaRequest;
+use App\Http\Requests\UpdatePartialBandaResquest;
 use App\Services\BandaService;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
@@ -56,6 +57,26 @@ class BandaController extends Controller
                 'line' => $e->getLine(),
             ]);
         }
+    }
+
+    public function show($id): JsonResponse
+    {
+        return $this->bandaService->show($id);
+    }
+
+    public function update(StoreBandaRequest $request, $id): JsonResponse
+    {
+        return $this->bandaService->update($id, $request->validated());
+    }
+
+    public function updatePartial(UpdatePartialBandaResquest $resquest, $id): JsonResponse
+    {
+        return $this->bandaService->updatePartial($resquest->validated(), $id);
+    }
+
+    public function destroy($id): JsonResponse
+    {
+        return $this->bandaService->destroy($id);
     }
 
 
