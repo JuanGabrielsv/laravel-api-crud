@@ -21,4 +21,19 @@ class Banda extends Model
     {
         return $this->hasMany(Concierto::class, 'banda_id');
     }
+
+    public function getCreatedAtAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->format('Y-m-d H:i');
+    }
+
+    public function getUpdatedAtAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->format('Y-m-d H:i');
+    }
+
+    public function getFechaConciertoAttribute($value)
+    {
+        return \Carbon\Carbon::parse($value)->format('Y-m-d H:i');
+    }
 }
