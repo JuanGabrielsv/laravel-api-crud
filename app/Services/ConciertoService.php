@@ -15,27 +15,17 @@ class ConciertoService
     {
         return ConciertoResource::collection(Concierto::with('banda')->paginate(request('per_page', 6)))->response();
     }
+
     public function store(array $data): JsonResponse
     {
         return ConciertoResource::make(Concierto::create($data)->load('banda'))->response();
     }
-    public function show($id): JsonResponse
+
+    public function show(int $id): JsonResponse
     {
-        try {
-            $concierto = Concierto::with('banda')->find($id);
-            if (!$concierto) {
-                return response()->json([
-                    'mensaje' => 'No hay concierto con el id ' . $id
-                ]);
-            }
-            return response()->json($concierto);
-        } catch (QueryException $e) {
-            Log::error($e->getMessage());
-            return response()->json([
-                'mensaje' => 'Ha ocurrido un error con la base de datos, inténtelo nuevamente mas tarde.'
-            ], 500);
-        }
+        return ConciertoResource::make(Concierto::with('banda')->findOrFail($id))->response();
     }
+
     public function destroy($id): JsonResponse
     {
         try {
@@ -54,6 +44,7 @@ class ConciertoService
             ]);
         }
     }
+
     public function update($id, $data): JsonResponse
     {
         try {
@@ -85,5 +76,4 @@ class ConciertoService
             ], 500);
         }
     }
-
 }
