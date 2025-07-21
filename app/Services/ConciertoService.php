@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Http\Resources\ConciertoResource;
 use App\Models\Concierto;
-use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
@@ -26,54 +25,30 @@ class ConciertoService
         return ConciertoResource::make(Concierto::with('banda')->findOrFail($id))->response();
     }
 
+    public function update(array $data, int $id): JsonResponse
+    {
+        return ConciertoResource::make(tap(Concierto::with('banda')->findOrFail($id),
+            fn($c) => $c->fill($data)->save())->fresh('banda'))->response();
+
+        // OTRA FORMA DE HACERLO:
+        // $concierto = Concierto::with('banda')->findOrFail($id);
+        // $concierto->fill($data)->save();
+        // $concierto->load('banda'); // Refresca relaciones
+        // return ConciertoResource::make($concierto)->response();
+    }
+
     public function destroy($id): JsonResponse
     {
         try {
             $conciertoBorrar = Concierto::find($id);
             if (!$conciertoBorrar) {
-                return response()->json([
-                    'mensaje' => 'No hay concierto con el id ' . $id
-                ]);
+                return response()->json(['mensaje' => 'No hay concierto con el id ' . $id]);
             }
             Concierto::destroy($id);
             return response()->json(['mensaje' => 'Concierto eliminado correctamente']);
         } catch (QueryException $e) {
             Log::error($e->getMessage());
-            return response()->json([
-                'mensaje' => 'Ha ocurrido un error con la base de datos, inténtelo más tarde.'
-            ]);
-        }
-    }
-
-    public function update($id, $data): JsonResponse
-    {
-        try {
-            $concierto = Concierto::find($id);
-
-            if (!$concierto) {
-                return response()->json([
-                    'mensaje' => "No se encontró el concierto con ID {$id}"
-                ], 404);
-            }
-
-            $concierto->update($data);
-
-            return response()->json([
-                'mensaje' => 'Concierto actualizado correctamente',
-                'concierto' => $concierto
-            ]);
-        } catch (QueryException $e) {
-            Log::error($e->getMessage());
-
-            return response()->json([
-                'mensaje' => 'Ha ocurrido un error con la base de datos, inténtelo más tarde.'
-            ], 500);
-        } catch (Exception $e) {
-            Log::error($e->getMessage());
-
-            return response()->json([
-                'mensaje' => 'Error inesperado al actualizar el concierto.'
-            ], 500);
+            return response()->json(['mensaje' => 'Ha ocurrido un error con la base de datos, inténtelo más tarde.']);
         }
     }
 }

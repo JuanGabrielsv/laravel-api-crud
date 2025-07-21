@@ -33,7 +33,7 @@ class ConciertoController extends Controller
 
     public function update(UpdateConciertoRequest $request, $id): JsonResponse
     {
-        return $this->conciertoService->update($id, $request->validated());
+        return $this->conciertoService->update($request->validated(),$id);
     }
 
     public function destroy($id): JsonResponse
