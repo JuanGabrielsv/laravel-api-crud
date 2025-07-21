@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Resources\ConciertoResource;
 use App\Models\Concierto;
 use Exception;
 use Illuminate\Database\QueryException;
@@ -10,78 +11,21 @@ use Illuminate\Support\Facades\Log;
 
 class ConciertoService
 {
-    /**
-     * @return JsonResponse
-     */
     public function index(): JsonResponse
     {
-        try {
-            $conciertos = Concierto::with('banda')->paginate(10);
-            if ($conciertos->isEmpty()) {
-                return response()->json([
-                    "mensaje" => "No hay ningún conciertos registrados",
-                ]);
-            }
-            return response()->json($conciertos);
-        } catch (Exception $e) {
-            Log::error($e->getMessage());
-            return response()->json([
-                "mensaje" => "Ha ocurrido un error",
-                'error' => '¿No existe la columna en la bd o la misma bd tal vez?'
-            ], 500);
-        }
+        return ConciertoResource::collection(Concierto::with('banda')->paginate(request('per_page', 6)))->response();
     }
 
-    /**
-     * @param $id
-     * @return JsonResponse
-     */
-    public function show($id): JsonResponse
+    public function store(array $data): JsonResponse
     {
-        try {
-            $concierto = Concierto::with('banda')->find($id);
-            if (!$concierto) {
-                return response()->json([
-                    'mensaje' => 'No hay concierto con el id ' . $id
-                ]);
-            }
-            return response()->json($concierto);
-        } catch (QueryException $e) {
-            Log::error($e->getMessage());
-            return response()->json([
-                'mensaje' => 'Ha ocurrido un error con la base de datos, inténtelo nuevamente mas tarde.'
-            ], 500);
-        }
+        return ConciertoResource::make(Concierto::create($data)->load('banda'))->response();
     }
 
-    /**
-     * @param array $data
-     * @return JsonResponse
-     */
-    public function create(array $data): JsonResponse
+    public function show(int $id): JsonResponse
     {
-        try {
-            $concierto = Concierto::create($data);
-            $concierto->load('banda');
-
-
-            return response()->json([
-                'mensaje' => 'Concierto creado correctamente',
-                'concierto' => $concierto], 201);
-        } catch (Exception $e) {
-            Log::error($e->getMessage());
-            return response()->json([
-                'mensaje' => 'Error al crear concierto',
-                'error' => '¿No existe la columna en la bd o la misma bd tal vez?'
-                //'error' => $e->getMessage()
-            ], 500);
-        }
+        return ConciertoResource::make(Concierto::with('banda')->findOrFail($id))->response();
     }
 
-    /**
-     * @param $id
-     * @return JsonResponse
-     */
     public function destroy($id): JsonResponse
     {
         try {
@@ -101,11 +45,6 @@ class ConciertoService
         }
     }
 
-    /**
-     * @param $id
-     * @param $data
-     * @return JsonResponse
-     */
     public function update($id, $data): JsonResponse
     {
         try {
@@ -134,41 +73,6 @@ class ConciertoService
 
             return response()->json([
                 'mensaje' => 'Error inesperado al actualizar el concierto.'
-            ], 500);
-        }
-    }
-
-    /**
-     * @param array $data
-     * @param $id
-     * @return JsonResponse
-     */
-    public function updatePartial(array $data, $id): JsonResponse
-    {
-        try {
-            $concierto = Concierto::find($id);
-
-            if (!$concierto) {
-                return response()->json([
-                    'mensaje' => "No se encontró el concierto con ID $id"
-                ], 404);
-            }
-
-            // Solo actualiza los campos que vienen en $data
-            foreach ($data as $campo => $valor) {
-                $concierto->{$campo} = $valor;
-            }
-
-            $concierto->save();
-
-            return response()->json([
-                'mensaje' => 'Concierto actualizado correctamente',
-                'concierto' => $concierto
-            ]);
-        } catch (Exception $e) {
-            Log::error('Error al actualizar concierto (PATCH): ' . $e->getMessage());
-            return response()->json([
-                'mensaje' => 'Ha ocurrido un error al actualizar el concierto. Inténtelo más tarde.'
             ], 500);
         }
     }
