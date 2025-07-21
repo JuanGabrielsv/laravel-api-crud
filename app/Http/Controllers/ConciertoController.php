@@ -32,6 +32,15 @@ class ConciertoController extends Controller
     }
 
     /**
+     * @param StoreConciertoRequest $request
+     * @return JsonResponse
+     */
+    public function store(StoreConciertoRequest $request): JsonResponse
+    {
+        return $this->conciertoService->store($request->validated());
+    }
+
+    /**
      * @param $id
      * @return JsonResponse
      */
@@ -40,14 +49,6 @@ class ConciertoController extends Controller
         return $this->conciertoService->show($id);
     }
 
-    /**
-     * @param StoreConciertoRequest $request
-     * @return JsonResponse
-     */
-    public function store(StoreConciertoRequest $request): JsonResponse
-    {
-        return $this->conciertoService->create($request->validated());
-    }
 
     /**
      * @param $id
@@ -68,13 +69,4 @@ class ConciertoController extends Controller
         return $this->conciertoService->update($id, $request->validated());
     }
 
-    /**
-     * @param UpdatePartialConciertoRequest $request
-     * @param $id
-     * @return JsonResponse
-     */
-    public function updatePartial(UpdatePartialConciertoRequest $request, $id): JsonResponse
-    {
-        return $this->conciertoService->updatePartial($request->validated(), $id);
-    }
 }

@@ -23,8 +23,7 @@ class ConciertoResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'Banda_nombre' => $this->banda->nombre,
-
-            //'banda' => new BandaResource($this->whenLoaded('banda')),
+            'banda' => new BandaResource($this->whenLoaded('banda')),
         ];
     }
 }

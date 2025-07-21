@@ -10,17 +10,16 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::get('/conciertos', [ConciertoController::class, 'index']);
-Route::get('/conciertos/{id}', [ConciertoController::class, 'show']);
 Route::post('/conciertos', [ConciertoController::class, 'store']);
+Route::get('/conciertos/{id}', [ConciertoController::class, 'show']);
 Route::put('/conciertos/{id}', [ConciertoController::class, 'update']);
-Route::patch('/conciertos/{id}', [ConciertoController::class, 'updatePartial']);
 Route::delete('/conciertos/{id}', [ConciertoController::class, 'destroy']);
 
+// Usando group, definimos primero la raiz de la ruta
 Route::group(['prefix' => 'bandas'], function () {
     Route::get('/', [BandaController::class, 'index']);
     Route::post('/', [BandaController::class, 'store']);
     Route::get('/{id}', [BandaController::class, 'show']);
     Route::put('/{id}', [BandaController::class, 'update']);
-    Route::patch('/{id}', [BandaController::class, 'updatePartial']);
     Route::delete('/{id}', [BandaController::class, 'destroy']);
 });
