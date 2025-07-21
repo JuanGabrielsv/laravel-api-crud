@@ -21,9 +21,10 @@ class BandaService
         return response()->json($bandas);
     }
 
-    public function store(array $data): Banda
+    public function store(array $data): JsonResponse
     {
-        return Banda::create($data);
+        $banda = Banda::create($data);
+        return response()->json($banda. 201);
     }
 
     public function show($id): JsonResponse
@@ -118,7 +119,7 @@ class BandaService
         }
     }
 
-    public function destroy($id)
+    public function destroy($id): JsonResponse
     {
         try {
             $banda = Banda::find($id);
@@ -127,8 +128,8 @@ class BandaService
                     'mensaje' => 'No hay ninguna banda con id ' . $id,
                 ], 404);
             }
-            $banda->destroy($id);
-            return response()->json($banda);
+            $banda->delete($id);
+            return response()->json([],204);
 
         } catch (QueryException $e) {
             if ($e->getCode() == 2002) {

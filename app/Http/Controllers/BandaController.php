@@ -36,10 +36,7 @@ class BandaController extends Controller
     {
         try {
             $banda = $this->bandaService->store($request->validated());
-            return response()->json([
-                'mensaje' => 'La banda se ha creado correctamente',
-                'banda' => $banda
-            ]);
+            return response()->json($banda);
         } catch (QueryException $e) {
             if ($e->getCode() == 2002) {
                 Log::error('Error de conexión con la base de datos', ['error' => $e->getMessage()]);
