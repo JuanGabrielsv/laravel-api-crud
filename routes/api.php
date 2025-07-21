@@ -1,9 +1,9 @@
 <?php
 
 use App\Http\Controllers\BandaController;
+use App\Http\Controllers\ConciertoController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ConciertoController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -12,8 +12,8 @@ Route::get('/user', function (Request $request) {
 Route::get('/conciertos', [ConciertoController::class, 'index']);
 Route::get('/conciertos/{id}', [ConciertoController::class, 'show']);
 Route::post('/conciertos', [ConciertoController::class, 'store']);
-Route::put('/conciertos/{id}',[ConciertoController::class, 'update']);
-Route::patch('/conciertos/{id}',[ConciertoController::class, 'updatePartial']);
+Route::put('/conciertos/{id}', [ConciertoController::class, 'update']);
+Route::patch('/conciertos/{id}', [ConciertoController::class, 'updatePartial']);
 Route::delete('/conciertos/{id}', [ConciertoController::class, 'destroy']);
 
 Route::group(['prefix' => 'bandas'], function () {

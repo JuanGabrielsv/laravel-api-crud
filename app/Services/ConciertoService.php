@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Resources\ConciertoResource;
 use App\Models\Concierto;
 use Exception;
 use Illuminate\Database\QueryException;
@@ -10,26 +11,19 @@ use Illuminate\Support\Facades\Log;
 
 class ConciertoService
 {
+
     /**
      * @return JsonResponse
      */
     public function index(): JsonResponse
     {
-        try {
-            $conciertos = Concierto::with('banda')->paginate(10);
-            if ($conciertos->isEmpty()) {
-                return response()->json([
-                    "mensaje" => "No hay ningún conciertos registrados",
-                ]);
-            }
-            return response()->json($conciertos);
-        } catch (Exception $e) {
-            Log::error($e->getMessage());
-            return response()->json([
-                "mensaje" => "Ha ocurrido un error",
-                'error' => '¿No existe la columna en la bd o la misma bd tal vez?'
-            ], 500);
-        }
+
+            $conciertos = Concierto::with('banda')->paginate(request('per_page', 2));
+            return ConciertoResource::collection($conciertos)->response();
+
+
+
+
     }
 
     /**
