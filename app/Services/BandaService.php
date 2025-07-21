@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Http\Resources\BandaResource;
 use App\Models\Banda;
+use App\Models\Concierto;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
@@ -18,8 +19,7 @@ class BandaService
 
     public function store(array $data): JsonResponse
     {
-        $banda = Banda::create($data);
-        return response()->json($banda . 201);
+        return BandaResource::make(Banda::create($data))->response();//
     }
 
     public function show($id): JsonResponse
