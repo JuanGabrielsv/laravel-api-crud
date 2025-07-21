@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Resources\BandaResource;
 use App\Models\Banda;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
@@ -12,19 +13,13 @@ class BandaService
 
     public function index(): JsonResponse
     {
-        $bandas = Banda::paginate(10);
-        if ($bandas->isEmpty()) {
-            return response()->json([
-                'mensaje' => 'No hay bandas'
-            ]);
-        }
-        return response()->json($bandas);
+        return BandaResource::collection(Banda::paginate(request('per_page', 6)))->response();
     }
 
     public function store(array $data): JsonResponse
     {
         $banda = Banda::create($data);
-        return response()->json($banda. 201);
+        return response()->json($banda . 201);
     }
 
     public function show($id): JsonResponse
@@ -88,7 +83,6 @@ class BandaService
         }
     }
 
-
     public function destroy($id): JsonResponse
     {
         try {
@@ -99,7 +93,7 @@ class BandaService
                 ], 404);
             }
             $banda->delete($id);
-            return response()->json([],204);
+            return response()->json([], 204);
 
         } catch (QueryException $e) {
             if ($e->getCode() == 2002) {

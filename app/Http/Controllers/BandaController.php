@@ -7,7 +7,6 @@ use App\Services\BandaService;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
-use Mockery\Exception;
 
 class BandaController extends Controller
 {
@@ -20,14 +19,7 @@ class BandaController extends Controller
 
     public function index(): JsonResponse
     {
-        try {
-            return $this->bandaService->index();
-        } catch (Exception $e) {
-            Log::error('Error en obtener todas las bandas (index)', ['error' => $e->getMessage()]);
-            return response()->json([
-                'mensaje' => 'Ha ocurrido un error',
-            ], $e->getCode());
-        }
+        return $this->bandaService->index();
     }
 
     public function store(StoreBandaRequest $request): JsonResponse
@@ -68,5 +60,4 @@ class BandaController extends Controller
     {
         return $this->bandaService->destroy($id);
     }
-
 }
