@@ -4,9 +4,7 @@ namespace App\Services;
 
 use App\Http\Resources\ConciertoResource;
 use App\Models\Concierto;
-use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Log;
 
 class ConciertoService
 {
@@ -37,18 +35,9 @@ class ConciertoService
         // return ConciertoResource::make($concierto)->response();
     }
 
-    public function destroy($id): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
-        try {
-            $conciertoBorrar = Concierto::find($id);
-            if (!$conciertoBorrar) {
-                return response()->json(['mensaje' => 'No hay concierto con el id ' . $id]);
-            }
-            Concierto::destroy($id);
-            return response()->json(['mensaje' => 'Concierto eliminado correctamente']);
-        } catch (QueryException $e) {
-            Log::error($e->getMessage());
-            return response()->json(['mensaje' => 'Ha ocurrido un error con la base de datos, inténtelo más tarde.']);
-        }
+        Concierto::findOrFail($id)->delete();
+        return response()->json(null, 204);
     }
 }

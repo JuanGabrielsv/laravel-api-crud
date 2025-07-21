@@ -31,12 +31,12 @@ class ConciertoController extends Controller
         return $this->conciertoService->show($id);
     }
 
-    public function update(UpdateConciertoRequest $request, $id): JsonResponse
+    public function update(UpdateConciertoRequest $request, int $id): JsonResponse
     {
         return $this->conciertoService->update($request->validated(),$id);
     }
 
-    public function destroy($id): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
         return $this->conciertoService->destroy($id);
     }
