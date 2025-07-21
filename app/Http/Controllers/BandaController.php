@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreBandaRequest;
-use App\Http\Requests\UpdatePartialBandaResquest;
 use App\Services\BandaService;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
@@ -12,7 +11,6 @@ use Mockery\Exception;
 
 class BandaController extends Controller
 {
-
     protected BandaService $bandaService;
 
     public function __construct(BandaService $bandaServiceService)
@@ -36,10 +34,7 @@ class BandaController extends Controller
     {
         try {
             $banda = $this->bandaService->store($request->validated());
-            return response()->json([
-                'mensaje' => 'La banda se ha creado correctamente',
-                'banda' => $banda
-            ]);
+            return response()->json($banda);
         } catch (QueryException $e) {
             if ($e->getCode() == 2002) {
                 Log::error('Error de conexión con la base de datos', ['error' => $e->getMessage()]);
@@ -69,15 +64,9 @@ class BandaController extends Controller
         return $this->bandaService->update($id, $request->validated());
     }
 
-    public function updatePartial(UpdatePartialBandaResquest $resquest, $id): JsonResponse
-    {
-        return $this->bandaService->updatePartial($resquest->validated(), $id);
-    }
-
     public function destroy($id): JsonResponse
     {
         return $this->bandaService->destroy($id);
     }
-
 
 }
