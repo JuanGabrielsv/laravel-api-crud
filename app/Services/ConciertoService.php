@@ -11,18 +11,14 @@ use Illuminate\Support\Facades\Log;
 
 class ConciertoService
 {
-    /**
-     * @return JsonResponse
-     */
     public function index(): JsonResponse
     {
         return ConciertoResource::collection(Concierto::with('banda')->paginate(request('per_page', 6)))->response();
     }
-
-    /**
-     * @param $id
-     * @return JsonResponse
-     */
+    public function store(array $data): JsonResponse
+    {
+        return ConciertoResource::make(Concierto::create($data)->load('banda'))->response();
+    }
     public function show($id): JsonResponse
     {
         try {
@@ -40,26 +36,6 @@ class ConciertoService
             ], 500);
         }
     }
-
-    /**
-     * @param array $data
-     * @return JsonResponse
-     */
-    public function store(array $data): JsonResponse
-    {
-        $concierto = Concierto::create($data);
-        $concierto->load('banda');
-
-        return response()->json([
-            'mensaje' => 'Concierto creado correctamente',
-            'concierto' => $concierto
-        ], 201);
-    }
-
-    /**
-     * @param $id
-     * @return JsonResponse
-     */
     public function destroy($id): JsonResponse
     {
         try {
@@ -78,12 +54,6 @@ class ConciertoService
             ]);
         }
     }
-
-    /**
-     * @param $id
-     * @param $data
-     * @return JsonResponse
-     */
     public function update($id, $data): JsonResponse
     {
         try {

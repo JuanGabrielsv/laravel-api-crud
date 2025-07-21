@@ -7,7 +7,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreConciertoRequest extends FormRequest
 {
-
     private const CAMPOS_REQUERIDOS = ['titulo', 'lugar', 'fecha_concierto', 'precio_entrada', 'banda_id'];
 
     public function authorize(): bool
@@ -26,23 +25,8 @@ class StoreConciertoRequest extends FormRequest
         ];
     }
 
-    //Voy a dejar esto para tenerlo como ejemplo, pero se podría usar los mensajes por defecto.
-    public function messages(): array
-    {
-        return [
-            'titulo.required' => 'El campo titulo es obligatorio.',
-            'lugar.required' => 'El campo lugar es obligatorio.',
-            'fecha_concierto.required' => 'El campo fecha es obligatorio.',
-            'fecha_concierto.date_format' => 'La fecha debe tener el formato: YYYY-MM-DD HH:MM',
-            'precio_entrada.required' => 'El campo precio entrada es obligatorio.',
-            'precio_entrada.numeric' => 'El precio debe ser un número.',
-            'precio_entrada.min' => 'El precio no puede ser negativo.',
-        ];
-    }
-
     protected function prepareForValidation(): void
     {
-
         $camposRecibidos = array_keys($this->all());
         $camposInvalidos = array_diff($camposRecibidos, self::CAMPOS_REQUERIDOS);
 
@@ -53,4 +37,20 @@ class StoreConciertoRequest extends FormRequest
             ], 422));
         }
     }
+
+    //Voy a dejar esto para tenerlo como ejemplo, pero se podría usar los mensajes por defecto.
+    //
+    //    public function messages(): array
+    //    {
+    //        return [
+    //            'titulo.required' => 'El campo titulo es obligatorio.',
+    //            'lugar.required' => 'El campo lugar es obligatorio.',
+    //            'fecha_concierto.required' => 'El campo fecha es obligatorio.',
+    //            'fecha_concierto.date_format' => 'La fecha debe tener el formato: YYYY-MM-DD HH:MM',
+    //            'precio_entrada.required' => 'El campo precio entrada es obligatorio.',
+    //            'precio_entrada.numeric' => 'El precio debe ser un número.',
+    //            'precio_entrada.min' => 'El precio no puede ser negativo.',
+    //        ];
+    //    }
+
 }

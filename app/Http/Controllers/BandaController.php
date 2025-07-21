@@ -11,7 +11,6 @@ use Mockery\Exception;
 
 class BandaController extends Controller
 {
-
     protected BandaService $bandaService;
 
     public function __construct(BandaService $bandaServiceService)
@@ -69,6 +68,5 @@ class BandaController extends Controller
     {
         return $this->bandaService->destroy($id);
     }
-
 
 }
