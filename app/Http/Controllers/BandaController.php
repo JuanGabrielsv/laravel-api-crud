@@ -27,7 +27,7 @@ class BandaController extends Controller
         return $this->bandaService->store($request->validated());
     }
 
-    public function show($id): JsonResponse
+    public function show(int $id): JsonResponse
     {
         return $this->bandaService->show($id);
     }
