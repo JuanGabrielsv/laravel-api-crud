@@ -3,10 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreBandaRequest;
+use App\Http\Requests\UpdateBandaRequest;
 use App\Services\BandaService;
-use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Log;
 
 class BandaController extends Controller
 {
@@ -32,7 +31,7 @@ class BandaController extends Controller
         return $this->bandaService->show($id);
     }
 
-    public function update(StoreBandaRequest $request, $id): JsonResponse
+    public function update(UpdateBandaRequest $request, int $id): JsonResponse
     {
         return $this->bandaService->update($request->validated(), $id);
     }
