@@ -19,6 +19,7 @@ class BandaResource extends JsonResource
             'nombre' => $this->nombre,
             'genero' => $this->genero,
             'idioma' => $this->idioma,
+            'genero_musical' => $this->genero_musical,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

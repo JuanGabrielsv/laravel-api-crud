@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BandaController;
 use App\Http\Controllers\ConciertoController;
+use App\Http\Controllers\GeneroMusicalController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,4 +25,13 @@ Route::group(['prefix' => 'bandas'], function () {
     Route::put('/{id}', [BandaController::class, 'update']);
     Route::patch('/{id}', [BandaController::class, 'update']);
     Route::delete('/{id}', [BandaController::class, 'destroy']);
+});
+
+Route::group(['prefix' => 'generos-musicales'], function () {
+    Route::get('/', [GeneroMusicalController::class, 'index']);
+    Route::post('/', [GeneroMusicalController::class, 'store']);
+    Route::get('/{id}', [GeneroMusicalController::class, 'show']);
+    Route::put('/{id}', [GeneroMusicalController::class, 'update']);
+    Route::patch('/{id}', [GeneroMusicalController::class, 'update']);
+    Route::delete('/{id}', [GeneroMusicalController::class, 'destroy']);
 });

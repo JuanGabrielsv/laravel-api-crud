@@ -8,7 +8,6 @@ use Illuminate\Http\JsonResponse;
 
 class BandaService
 {
-
     public function index(): JsonResponse
     {
         return BandaResource::collection(Banda::paginate(request('per_page', 6)))->response();
