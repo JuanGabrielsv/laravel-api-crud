@@ -15,7 +15,6 @@ class Banda extends Model
 
     protected $fillable = [
         'nombre',
-        'genero',
         'idioma',
     ];
 
@@ -26,7 +25,7 @@ class Banda extends Model
 
     public function generos(): BelongsToMany
     {
-        return $this->belongsToMany(GeneroMusical::class);
+        return $this->belongsToMany(GeneroMusical::class, 'banda_genero_musical')->withTimestamps();
     }
 
     public function getCreatedAtAttribute($value)

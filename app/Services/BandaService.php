@@ -15,7 +15,14 @@ class BandaService
 
     public function store(array $data): JsonResponse
     {
-        return BandaResource::make(Banda::create($data))->response();//
+        $generos = $data['generos_musicales'] ?? [];
+        unset($data['generos_musicales']);
+
+        $banda = Banda::create($data);
+        $banda->generos()->sync($generos);
+
+        return BandaResource::make($banda->load('generos'))->response();
+        //return BandaResource::make(Banda::create($data))->response();
     }
 
     public function show(int $id): JsonResponse

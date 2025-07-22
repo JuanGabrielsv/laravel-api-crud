@@ -19,7 +19,7 @@ class GeneroMusical extends Model
 
     public function bandas(): BelongsToMany
     {
-        return $this->belongsToMany(Banda::class);
+        return $this->belongsToMany(Banda::class, 'banda_genero_musical')->withTimestamps();
     }
 
     public function getCreatedAtAttribute($value)

@@ -17,9 +17,8 @@ class BandaResource extends JsonResource
         return [
             'id' => $this->id,
             'nombre' => $this->nombre,
-            'genero' => $this->genero,
             'idioma' => $this->idioma,
-            'genero_musical' => $this->genero_musical,
+            'generos_musicales' => $this->generos->pluck('nombre'),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
