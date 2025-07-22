@@ -2,18 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\GeneroMusical;
 use App\Http\Requests\StoreGeneroMusicalRequest;
 use App\Http\Requests\UpdateGeneroMusicalRequest;
+use App\Models\GeneroMusical;
+use App\Services\GeneroMusicalService;
 
 class GeneroMusicalController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected GeneroMusicalService $generoMusicalService;
+
+    public function __construct(GeneroMusicalService $generoMusicalService)
+    {
+        $this->generoMusicalService = $generoMusicalService;
+    }
+
     public function index()
     {
-        //
+        return $this->generoMusicalService->index();
     }
 
     /**
