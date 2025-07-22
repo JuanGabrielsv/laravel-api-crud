@@ -36,7 +36,7 @@ class BandaController extends Controller
         return $this->bandaService->update($request->validated(), $id);
     }
 
-    public function destroy($id): JsonResponse
+    public function destroy(int $id): JsonResponse
     {
         return $this->bandaService->destroy($id);
     }
