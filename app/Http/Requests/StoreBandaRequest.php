@@ -24,7 +24,6 @@ class StoreBandaRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-
         $camposRecibidos = array_keys($this->all());
         $camposInvalidos = array_diff($camposRecibidos, self::CAMPOS_REQUERIDOS);
 
