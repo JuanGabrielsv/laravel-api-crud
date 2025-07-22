@@ -6,6 +6,7 @@ use App\Http\Requests\StoreGeneroMusicalRequest;
 use App\Http\Requests\UpdateGeneroMusicalRequest;
 use App\Models\GeneroMusical;
 use App\Services\GeneroMusicalService;
+use Illuminate\Http\JsonResponse;
 
 class GeneroMusicalController extends Controller
 {
@@ -16,17 +17,14 @@ class GeneroMusicalController extends Controller
         $this->generoMusicalService = $generoMusicalService;
     }
 
-    public function index()
+    public function index(): JsonResponse
     {
         return $this->generoMusicalService->index();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreGeneroMusicalRequest $request)
+    public function store(StoreGeneroMusicalRequest $request): JsonResponse
     {
-        //
+        return $this->generoMusicalService->store($request->validated());
     }
 
     /**
