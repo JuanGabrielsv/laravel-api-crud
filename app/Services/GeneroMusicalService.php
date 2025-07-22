@@ -18,4 +18,9 @@ class GeneroMusicalService
     {
         return GeneroMusicalResource::make(GeneroMusical::create($data))->response();
     }
+
+    public function show(int $id): JsonResponse
+    {
+        return GeneroMusicalResource::make(GeneroMusical::findOrFail($id))->response();
+    }
 }

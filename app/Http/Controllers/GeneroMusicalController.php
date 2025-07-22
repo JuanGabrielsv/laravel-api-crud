@@ -27,12 +27,9 @@ class GeneroMusicalController extends Controller
         return $this->generoMusicalService->store($request->validated());
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(GeneroMusical $generoMusical)
+    public function show(int $id): JsonResponse
     {
-        //
+        return $this->generoMusicalService->show($id);
     }
 
     /**
