@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreGeneroMusicalRequest;
 use App\Http\Requests\UpdateGeneroMusicalRequest;
-use App\Models\GeneroMusical;
 use App\Services\GeneroMusicalService;
 use Illuminate\Http\JsonResponse;
 
@@ -37,11 +36,8 @@ class GeneroMusicalController extends Controller
         return $this->generoMusicalService->update($request->validated(), $id);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(GeneroMusical $generoMusical)
+    public function destroy(int $id): JsonResponse
     {
-        //
+        return $this->generoMusicalService->destroy($id);
     }
 }
