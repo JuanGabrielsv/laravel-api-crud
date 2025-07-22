@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Http\Requests\StoreGeneroMusicalRequest;
 use App\Http\Resources\GeneroMusicalResource;
+use App\Models\Concierto;
 use App\Models\GeneroMusical;
 use Illuminate\Http\JsonResponse;
 
@@ -22,5 +23,10 @@ class GeneroMusicalService
     public function show(int $id): JsonResponse
     {
         return GeneroMusicalResource::make(GeneroMusical::findOrFail($id))->response();
+    }
+
+    public function update(array $data, int $id): JsonResponse
+    {
+        return GeneroMusicalResource::make(tap(GeneroMusical::findOrFail($id), fn($g) => $g->fill($data)->save()))->response();
     }
 }

@@ -32,12 +32,9 @@ class GeneroMusicalController extends Controller
         return $this->generoMusicalService->show($id);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateGeneroMusicalRequest $request, GeneroMusical $generoMusical)
+    public function update(UpdateGeneroMusicalRequest $request, int $id): JsonResponse
     {
-        //
+        return $this->generoMusicalService->update($request->validated(), $id);
     }
 
     /**
