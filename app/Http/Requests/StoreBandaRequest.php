@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class StoreBandaRequest extends FormRequest
 {
-    private const CAMPOS_REQUERIDOS = ['nombre', 'genero', 'idioma'];
+    private const CAMPOS_REQUERIDOS = ['nombre', 'generos_musicales', 'idioma'];
 
     public function authorize(): bool
     {
@@ -17,7 +17,8 @@ class StoreBandaRequest extends FormRequest
     {
         return [
             'nombre' => 'required|string|unique:banda,nombre',
-            'genero' => 'required|string',
+            'generos_musicales' => 'required|array|min:1',
+            'generos_musicales.*' => 'integer|exists:genero_musical,id',
             'idioma' => 'required|string'
         ];
     }
