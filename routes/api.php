@@ -9,77 +9,55 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| RUTAS PÚBLICAS
-| Accesibles para cualquiera (invitados).
+| RUTAS PÚBLICAS DE AUTENTICACIÓN
+| Las únicas rutas accesibles sin un token.
 |--------------------------------------------------------------------------
 */
-
-// --- RUTA PÚBLICA DE LOGIN ---
 Route::post('/login', [AuthController::class, 'login']);
-
-
-// --- RUTAS PÚBLICAS DE LECTURA (GET) ---
-Route::group(['prefix' => 'conciertos'], function () {
-    Route::get('/', [ConciertoController::class, 'index']);
-    Route::get('/{id}', [ConciertoController::class, 'show']);
-});
-
-Route::group(['prefix' => 'bandas'], function () {
-    Route::get('/', [BandaController::class, 'index']);
-    Route::get('/{id}', [BandaController::class, 'show']);
-});
-
-// ¡IMPORTANTE! Las rutas GET para géneros musicales siguen siendo públicas.
-Route::group(['prefix' => 'generos-musicales'], function () {
-    Route::get('/', [GeneroMusicalController::class, 'index']);
-    Route::get('/{id}', [GeneroMusicalController::class, 'show']);
-});
+Route::post('/register', [AuthController::class, 'register']);
 
 
 /*
 |--------------------------------------------------------------------------
-| RUTAS PROTEGIDAS PARA USUARIOS AUTENTICADOS
-| Requieren un token válido.
+| RUTAS PROTEGIDAS
+| TODAS las demás rutas requieren un token de autenticación válido.
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth:sanctum')->group(function () {
+
+    // --- Rutas de Usuario y Sesión ---
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
 
     Route::post('/logout', function (Request $request) {
         $request->user()->currentAccessToken()->delete();
-        return response()->json(['message' => 'Sesión cerrada correctamente'], 200);
+        return response()->json(['message' => 'Sesión cerrada correctamente']);
     });
 
-    // --- Rutas de Conciertos y Bandas para usuarios logueados ---
+    // --- Rutas de Conciertos (solo los del usuario) ---
+    Route::get('/conciertos', [ConciertoController::class, 'index']);
     Route::post('/conciertos', [ConciertoController::class, 'store']);
+    Route::get('/conciertos/{id}', [ConciertoController::class, 'show']);
     Route::put('/conciertos/{id}', [ConciertoController::class, 'update']);
     Route::delete('/conciertos/{id}', [ConciertoController::class, 'destroy']);
 
-    Route::group(['prefix' => 'bandas'], function () {
-        Route::post('/', [BandaController::class, 'store']);
-        Route::put('/{id}', [BandaController::class, 'update']);
-        Route::delete('/{id}', [BandaController::class, 'destroy']);
+    // --- Rutas de Bandas (solo las del usuario) ---
+    Route::get('/bandas', [BandaController::class, 'index']);
+    Route::post('/bandas', [BandaController::class, 'store']);
+    Route::get('/bandas/{banda}', [BandaController::class, 'show']);
+    Route::put('/bandas/{banda}', [BandaController::class, 'update']);
+    Route::delete('/bandas/{id}', [BandaController::class, 'destroy']);
+
+    // --- Rutas de Géneros Musicales ---
+    // Cualquier usuario logueado puede VER los géneros.
+    Route::get('/generos-musicales', [GeneroMusicalController::class, 'index']);
+    Route::get('/generos-musicales/{id}', [GeneroMusicalController::class, 'show']);
+
+    // Las rutas para MODIFICAR géneros están en un sub-grupo de admin.
+    Route::middleware('is.admin')->group(function () {
+        Route::post('/generos-musicales', [GeneroMusicalController::class, 'store']);
+        Route::put('/generos-musicales/{id}', [GeneroMusicalController::class, 'update']);
+        Route::delete('/generos-musicales/{id}', [GeneroMusicalController::class, 'destroy']);
     });
-});
-
-
-/*
-|--------------------------------------------------------------------------
-| RUTAS PROTEGIDAS PARA ADMINISTRADORES
-| Requieren un token válido Y el rol de 'admin'.
-|--------------------------------------------------------------------------
-*/
-// ↓↓↓ ¡AQUÍ ESTÁ LA MAGIA! ↓↓↓
-// Aplicamos ambos middlewares. Si 'auth:sanctum' falla, 'is.admin' ni se ejecuta.
-Route::middleware(['auth:sanctum', 'is.admin'])->group(function () {
-
-    // --- Rutas de Géneros Musicales para administradores ---
-    Route::group(['prefix' => 'generos-musicales'], function () {
-        Route::post('/', [GeneroMusicalController::class, 'store']);
-        Route::put('/{id}', [GeneroMusicalController::class, 'update']);
-        Route::delete('/{id}', [GeneroMusicalController::class, 'destroy']);
-    });
-
 });

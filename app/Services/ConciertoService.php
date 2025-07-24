@@ -4,40 +4,47 @@ namespace App\Services;
 
 use App\Http\Resources\ConciertoResource;
 use App\Models\Concierto;
-use Illuminate\Http\JsonResponse;
+use App\Models\User;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 
 class ConciertoService
 {
-    public function index(): JsonResponse
+    /**
+     * Obtiene los conciertos paginados para un usuario específico.
+     */
+    public function getConciertosForUser(User $user): LengthAwarePaginator
     {
-        return ConciertoResource::collection(Concierto::with('banda')->paginate(request('per_page', 6)))->response();
+        return $user->conciertos()
+            ->with('banda')
+            ->paginate(request('per_page', 6));
     }
 
-    public function store(array $data): JsonResponse
+    /**
+     * Crea un nuevo concierto para un usuario específico.
+     */
+    public function createForUser(User $user, array $data): Concierto
     {
-        return ConciertoResource::make(Concierto::create($data)->load('banda'))->response();
+        $concierto = $user->conciertos()->create($data);
+
+        return $concierto->load('banda');
     }
 
-    public function show(int $id): JsonResponse
+    /**
+     * Actualiza un concierto existente que ya ha sido verificado por la Policy.
+     */
+    public function update(Concierto $concierto, array $data): Concierto
     {
-        return ConciertoResource::make(Concierto::with('banda')->findOrFail($id))->response();
+        $concierto->fill($data)->save();
+
+        return $concierto->fresh('banda');
     }
 
-    public function update(array $data, int $id): JsonResponse
+    /**
+     * Borra un concierto existente que ya ha sido verificado por la Policy.
+     */
+    public function delete(Concierto $concierto): void
     {
-        return ConciertoResource::make(tap(Concierto::with('banda')->findOrFail($id),
-            fn($c) => $c->fill($data)->save())->fresh('banda'))->response();
-
-        // OTRA FORMA DE HACERLO:
-        // $concierto = Concierto::with('banda')->findOrFail($id);
-        // $concierto->fill($data)->save();
-        // $concierto->load('banda'); // Refresca relaciones
-        // return ConciertoResource::make($concierto)->response();
-    }
-
-    public function destroy(int $id): JsonResponse
-    {
-        Concierto::findOrFail($id)->delete();
-        return response()->json(null, 204);
+        $concierto->delete();
     }
 }

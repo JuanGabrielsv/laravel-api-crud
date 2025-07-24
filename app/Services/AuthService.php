@@ -30,4 +30,23 @@ class AuthService
         // Devuelve el token de texto plano.
         return $user->createToken('auth_token')->plainTextToken;
     }
+
+    /**
+     * Crea un nuevo usuario y devuelve el modelo del usuario creado.
+     *
+     * @param string $name
+     * @param string $email
+     * @param string $password
+     * @return User
+     */
+    public function register(string $name, string $email, string $password): User
+    {
+        return User::create([
+            'name' => $name,
+            'email' => $email,
+            'password' => Hash::make($password),
+            // Nota: El rol por defecto será 'user' gracias a la configuración de la migración.
+            // No permitimos que el usuario elija su rol al registrarse.
+        ]);
+    }
 }

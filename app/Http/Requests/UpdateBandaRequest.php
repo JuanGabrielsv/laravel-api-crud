@@ -3,17 +3,10 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\ValidationException;
-use function PHPUnit\Framework\isEmpty;
+use Illuminate\Validation\Rule;
 
 class UpdateBandaRequest extends FormRequest
 {
-    const CAMPOS_PERMITIDOS = [
-        'nombre',
-        'genero',
-        'idioma',
-    ];
-
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -25,39 +18,21 @@ class UpdateBandaRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
      */
     public function rules(): array
     {
-        $rules = [
-            'nombre' => 'required|string',
-            'genero' => 'required|string',
-            'idioma' => 'required|string',
+        // Usamos Rule::when() para aplicar 'sometimes' solo para peticiones PATCH.
+        // Es una forma más moderna y legible de Laravel.
+        $requiredRule = Rule::when($this->isMethod('put'), 'required', 'sometimes');
+
+        return [
+            'nombre' => [$requiredRule, 'string', 'max:255'],
+            'idioma' => [$requiredRule, 'string'],
+
+            // --- REGLAS CORREGIDAS PARA GÉNEROS ---
+            'generos_musicales'   => [$requiredRule, 'array'],
+            'generos_musicales.*' => ['integer', 'exists:genero_musical,id'],
         ];
-
-        if ($this->isMethod('patch')) {
-            foreach ($rules as $field => $rule) {
-                $rules[$field] = 'sometimes|' . $rule;
-            }
-        }
-        return $rules;
-    }
-
-    protected function prepareForValidation(): void
-    {
-        $camposRecibidos = array_keys($this->all());
-        $camposInvalidos = array_diff($camposRecibidos, self::CAMPOS_PERMITIDOS);
-
-        if (!empty($camposInvalidos)) {
-            throw ValidationException::withMessages([
-                'campos_invalidos' => ['Campos no permitidos en la solicitud: ' . implode(', ', $camposInvalidos)],
-            ]);
-        }
-
-        if (empty($camposRecibidos)){
-            throw ValidationException::withMessages([
-                'No hay campos recibidos'
-            ]);
-        }
     }
 }

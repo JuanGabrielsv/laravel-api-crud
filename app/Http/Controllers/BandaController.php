@@ -4,40 +4,61 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreBandaRequest;
 use App\Http\Requests\UpdateBandaRequest;
+use App\Http\Resources\BandaResource;
+use App\Models\Banda;
+
+// <-- ¡Importante!
 use App\Services\BandaService;
 use Illuminate\Http\JsonResponse;
 
 class BandaController extends Controller
 {
-    protected BandaService $bandaService;
-
-    public function __construct(BandaService $bandaServiceService)
+    // Corregí el nombre de la variable para que sea más limpio.
+    public function __construct(protected BandaService $bandaService)
     {
-        $this->bandaService = $bandaServiceService;
     }
 
     public function index(): JsonResponse
     {
-        return $this->bandaService->index();
+        $this->authorize('viewAny', Banda::class);
+
+        $bandas = $this->bandaService->getBandasForUser(auth()->user());
+
+        return BandaResource::collection($bandas)->response();
     }
 
     public function store(StoreBandaRequest $request): JsonResponse
     {
-        return $this->bandaService->store($request->validated());
+        $this->authorize('create', Banda::class);
+
+        $banda = $this->bandaService->createForUser(auth()->user(), $request->validated());
+
+        return (new BandaResource($banda))->response()->setStatusCode(201);
     }
 
-    public function show(int $id): JsonResponse
+    public function show(Banda $banda): JsonResponse
     {
-        return $this->bandaService->show($id);
+        $this->authorize('view', $banda);
+
+        return (new BandaResource($banda))->response();
     }
 
-    public function update(UpdateBandaRequest $request, int $id): JsonResponse
+    public function update(UpdateBandaRequest $request, Banda $banda): JsonResponse
     {
-        return $this->bandaService->update($request->validated(), $id);
+
+        $this->authorize('update', $banda);
+
+        $bandaActualizada = $this->bandaService->update($banda, $request->validated());
+
+        return (new BandaResource($bandaActualizada))->response();
     }
 
-    public function destroy(int $id): JsonResponse
+    public function destroy(Banda $banda): JsonResponse
     {
-        return $this->bandaService->destroy($id);
+        $this->authorize('delete', $banda);
+
+        $this->bandaService->delete($banda);
+
+        return response()->json(null, 204);
     }
 }

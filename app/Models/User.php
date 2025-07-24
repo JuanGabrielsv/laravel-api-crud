@@ -47,4 +47,21 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * Define la relación "hasMany" con Concierto.
+     * Un usuario puede tener muchos conciertos.
+     */
+    public function conciertos() // <-- ¡AÑADE ESTA RELACIÓN!
+    {
+        return $this->hasMany(Concierto::class);
+    }
+
+    /**
+     * Si también tienes la relación con Banda, debería estar aquí.
+     */
+    public function bandas()
+    {
+        return $this->hasMany(Banda::class);
+    }
 }

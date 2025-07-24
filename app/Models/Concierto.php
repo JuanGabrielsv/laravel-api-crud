@@ -17,14 +17,32 @@ class Concierto extends Model
         'lugar',
         'fecha_concierto',
         'precio_entrada',
-        'banda_id'
+        'banda_id',
+        'user_id'
     ];
 
+    /*
+    |--------------------------------------------------------------------------
+    | RELACIONES
+    | TODAS las relaciones que tiene Concierto.
+    |--------------------------------------------------------------------------
+    */
     public function banda(): BelongsTo
     {
         return $this->belongsTo(Banda::class, 'banda_id');
     }
 
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | MÉTODOS VARIOS
+    | Aquí van los métodos especiales como formateo de fecha.
+    |--------------------------------------------------------------------------
+    */
     public function getCreatedAtAttribute($value)
     {
         return \Carbon\Carbon::parse($value)->format('Y-m-d H:i');

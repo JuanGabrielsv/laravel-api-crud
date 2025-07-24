@@ -4,40 +4,72 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreConciertoRequest;
 use App\Http\Requests\UpdateConciertoRequest;
+use App\Http\Resources\ConciertoResource;
+use App\Models\Concierto;
 use App\Services\ConciertoService;
 use Illuminate\Http\JsonResponse;
 
 class ConciertoController extends Controller
 {
-    protected ConciertoService $conciertoService;
-
-    public function __construct(ConciertoService $conciertoService)
+    public function __construct(protected ConciertoService $conciertoService)
     {
-        $this->conciertoService = $conciertoService;
     }
 
+    /**
+     * Muestra la lista de conciertos CREADOS POR EL USUARIO AUTENTICADO.
+     */
     public function index(): JsonResponse
     {
-        return $this->conciertoService->index();
+        $this->authorize('viewAny', Concierto::class);
+
+        $conciertos = $this->conciertoService->getConciertosForUser(auth()->user());
+
+        return ConciertoResource::collection($conciertos)->response();
     }
 
+    /**
+     * Guarda un nuevo concierto en la base de datos.
+     */
     public function store(StoreConciertoRequest $request): JsonResponse
     {
-        return $this->conciertoService->store($request->validated());
+        $this->authorize('create', Concierto::class);
+
+        $concierto = $this->conciertoService->createForUser(auth()->user(), $request->validated());
+
+        return (new ConciertoResource($concierto))->response()->setStatusCode(201);
     }
 
-    public function show(int $id): JsonResponse
+    /**
+     * Muestra un concierto específico, si el usuario tiene permiso.
+     */
+    public function show(Concierto $concierto): JsonResponse
     {
-        return $this->conciertoService->show($id);
+        $this->authorize('view', $concierto);
+
+        return (new ConciertoResource($concierto))->response();
     }
 
-    public function update(UpdateConciertoRequest $request, int $id): JsonResponse
+    /**
+     * Actualiza un concierto específico, si el usuario tiene permiso.
+     */
+    public function update(UpdateConciertoRequest $request, Concierto $concierto): JsonResponse
     {
-        return $this->conciertoService->update($request->validated(), $id);
+        $this->authorize('update', $concierto);
+
+        $conciertoActualizado = $this->conciertoService->update($concierto, $request->validated());
+
+        return (new ConciertoResource($conciertoActualizado))->response();
     }
 
-    public function destroy(int $id): JsonResponse
+    /**
+     * Borra un concierto específico, si el usuario tiene permiso.
+     */
+    public function destroy(Concierto $concierto): JsonResponse
     {
-        return $this->conciertoService->destroy($id);
+        $this->authorize('delete', $concierto);
+
+        $this->conciertoService->delete($concierto);
+
+        return response()->json(null, 204);
     }
 }
