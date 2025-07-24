@@ -15,6 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->use([
             \App\Http\Middleware\ForceJsonResponse::class,
         ]);
+        $middleware->alias([
+            'is.admin' => \App\Http\Middleware\IsAdminMiddleware::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
